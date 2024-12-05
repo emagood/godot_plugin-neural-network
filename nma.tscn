@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://bvthgve4xgjy4"]
+[gd_scene load_steps=3 format=3 uid="uid://bvthgve4xgjy4"]
 
 [ext_resource type="Script" path="res://nma.gd" id="1_exva5"]
+[ext_resource type="Script" path="res://totnan.gd" id="3_eor5m"]
 
 [node name="nma" type="Control"]
 layout_mode = 3
@@ -10,3 +11,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_exva5")
+
+[node name="totnan" type="Node" parent="."]
+script = ExtResource("3_eor5m")
