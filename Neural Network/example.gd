@@ -1,7 +1,6 @@
-@tool
-extends EditorPlugin
+extends Node
 
-func example() -> void:
+func _ready() -> void:
 	var nn : NNET = NNET.new([2,5,6,1], false)
 	nn.set_loss_function(BNNET.LossFunctions.MSE)
 	nn.use_Rprop(0.3)

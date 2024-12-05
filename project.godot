@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="http_quest"
+run/main_scene="res://nma.tscn"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Example="*res://Neural Network/example.gd"
 
 [file_customization]
 
