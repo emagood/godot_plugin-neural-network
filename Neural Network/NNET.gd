@@ -1010,7 +1010,8 @@ func apply_gradients(c : float) -> void:
 			j += 1
 		i += 1
 
-func train(input_data : Array[Array], target_data : Array[Array]) -> void:
+func train(input_data : Array, target_data : Array) -> void:
+	#prints("tipo de dato entrada ",typeof(input_data[0]),"  datos de target",typeof(target_data[0]))
 	if algorithm == BNNET.Algorithms.no_algorithm:
 		push_error("Please set algorithm using use_gradient_descent(...), use_adam, use_resilient_propagation and etc.")
 		return

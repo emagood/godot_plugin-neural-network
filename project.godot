@@ -15,10 +15,6 @@ run/main_scene="res://nma.tscn"
 config/features=PackedStringArray("4.4", "Mobile")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Example="*res://Neural Network/example.gd"
-
 [file_customization]
 
 folder_colors={
