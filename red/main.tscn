@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://uhnnvxm2ntmq"]
+
+[ext_resource type="Script" path="res://red/main.gd" id="1_aebqp"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_aebqp")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "modelos neuronales artificial godot "
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 52.0
+offset_right = 547.0
+offset_bottom = 424.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="train all" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "entrenar todo"
+
+[node name="cargar modelo" type="Button" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "cargar modelo"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label2" type="Label" parent="HBoxContainer/ScrollContainer"]
+layout_mode = 2
+text = "EN CONSTRUCCION AUN FALTAN COSAS"
+
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/train all" to="." method="_on_train_all_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/cargar modelo" to="." method="_on_cargar_modelo_pressed"]
