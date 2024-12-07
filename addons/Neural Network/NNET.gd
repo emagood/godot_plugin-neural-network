@@ -1,4 +1,4 @@
-@icon("res://addons/Neural Network/base NNET class.gd")
+
 extends BNNET
 class_name NNET
 

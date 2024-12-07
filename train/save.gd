@@ -37,7 +37,7 @@ func _ready() -> void:
 			))
 	
 	# Guardar el modelo entrenado
-	nn.save_binary("res://trained_model.bin")
+	nn.save_binary("res://data/trained_model.bin")
 	print("Modelo guardado exitosamente.")
 	
 	# Mostrar resultados finales

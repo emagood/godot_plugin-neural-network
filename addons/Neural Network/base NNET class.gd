@@ -1,4 +1,4 @@
-@icon("res://addons/Neural Network/base NNET class.gd")
+
 class_name BNNET
 
 enum ActivationFunctions
