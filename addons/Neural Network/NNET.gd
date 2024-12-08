@@ -421,6 +421,8 @@ func set_loss_function(function : Variant) -> void:
 
 #region Delta
 
+## Calcula los deltas de error para la última capa
+
 func compute_deltas_last_layer() -> void:
 	df[f.size() - 1].call()
 	var error = lf.call(neurons_out[f.size() - 1], target)
@@ -433,6 +435,8 @@ func compute_deltas_last_layer() -> void:
 		neurons_in[f.size() - 1][i] = last_layer_neurons_copy[i]
 		i += 1
 	f[f.size() - 1].call()
+
+## Calcula los deltas de error para las capas ocultas
 
 func compute_deltas_hidden_layers() -> void:
 	var layer : int = neuron_deltas.size() - 2
@@ -448,6 +452,8 @@ func compute_deltas_hidden_layers() -> void:
 			neuron_deltas[layer][neuron] *= dlayer[neuron]
 			neuron += 1
 		layer -= 1
+
+## Calcula los deltas de los pesos para actualizar los pesos durante la retropropagación
 
 func compute_weight_deltas() -> void:
 	var layer : int = 0
@@ -780,7 +786,7 @@ func update_deltas_Rprop() -> void:
 				sign = sign + (sign - 1)
 				aa[Rprop.wg][i][j][k] = aa[Rprop.wg][i][j][k] * aa[Rprop.ep] * same_sign - (1 - same_sign) * aa[Rprop.em] * aa[Rprop.wg][i][j][k]
 				var greater : int = int(aa[Rprop.wg][i][j][k] * sign > aa[Rprop.max_step])
-				var lesser : int = int(aa[Rprop.wg][i][j][k] * sign < aa[Rprop.min_step]) 
+				var lesser : int = int(aa[Rprop.wg][i][j][k] * sign < aa[Rprop.min_step])
 				aa[Rprop.wg][i][j][k] = aa[Rprop.wg][i][j][k] * (1 - greater) + aa[Rprop.max_step] * greater * sign
 				aa[Rprop.wg][i][j][k] = aa[Rprop.wg][i][j][k] * (1 - lesser) + aa[Rprop.min_step] * lesser * sign
 				k += 1
@@ -796,7 +802,7 @@ func update_deltas_Rprop() -> void:
 				sign = sign + (sign - 1)
 				aa[Rprop.bg][i][j] = aa[Rprop.bg][i][j] * aa[Rprop.ep] * same_sign - (1 - same_sign) * aa[Rprop.em] * aa[Rprop.bg][i][j]
 				var greater : int = int(aa[Rprop.bg][i][j] * sign > aa[Rprop.max_step])
-				var lesser : int = int(aa[Rprop.bg][i][j] * sign < aa[Rprop.min_step]) 
+				var lesser : int = int(aa[Rprop.bg][i][j] * sign < aa[Rprop.min_step])
 				aa[Rprop.bg][i][j] = aa[Rprop.bg][i][j] * (1 - greater) + aa[Rprop.max_step] * greater * sign
 				aa[Rprop.bg][i][j] = aa[Rprop.bg][i][j] * (1 - lesser) + aa[Rprop.min_step] * lesser * sign
 				j += 1
@@ -1173,11 +1179,21 @@ func check_learning_rate(learning_rate : float) -> void:
 	if learning_rate < 0:
 		push_error("Learning rate must be above zero")
 		return
+		
+	elif learning_rate  <= 0.001:
+		push_warning(" parametro muy bajo , entrenamiento muy lento ")
+		
+	elif learning_rate  >= 0.1:
+		push_warning(" parametro muy alto , entrenamiento alto puede ser inestable ")
+		
 	lr = learning_rate
 
 #endregion
 
 #region Access
+
+
+## cuántas muestras de datos se procesan en una sola vez antes de actualizar los pesos del modelo
 
 func set_batch_size(new_batch_size : int) -> void:
 	if new_batch_size < 0:
@@ -1280,6 +1296,50 @@ func copy_functions(nn : NNET) -> void:
 #endregion
 
 #region Data
+
+
+func compress_nnet(path : String):
+	var content
+	if not FileAccess.file_exists(path):
+		push_error("no existe el archivo a comprimir")
+		return 
+
+	var file = FileAccess.open(path, FileAccess.READ_WRITE)
+	if file:
+		content = file.get_buffer(file.get_length())  
+		file.close()
+
+	# Abrir archivo comprimido para escritura
+	file = FileAccess.open_compressed(path + ".compressed", FileAccess.WRITE, FileAccess.COMPRESSION_DEFLATE)
+	if file:
+		file.store_buffer(content)  # Almacenar los datos en bytes comprimidos
+		print("data compressed")
+		file.close()
+
+func load_compress(path):
+	if not FileAccess.file_exists(path):
+		push_error("no existe el archivo a comprimir")
+	var file
+	var data
+	file = FileAccess.open_compressed(path, FileAccess.READ_WRITE, FileAccess.COMPRESSION_DEFLATE)
+	if file.file_exists(save_path):
+		var error = file.get_open_error()
+		if error == OK:
+			data = file.get_var()
+			prints("data descompress")
+			file.flush()
+			file.close()
+
+
+	file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_buffer(data)
+		#file.store_var(data)
+		file.flush()
+		file.close()
+		
+	load_data(path)
+			
 
 func save_binary(path : String) -> void:
 	var file = FileAccess.open(full_path(path), FileAccess.WRITE)

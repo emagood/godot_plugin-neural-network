@@ -1,0 +1,171 @@
+[gd_scene load_steps=24 format=3 uid="uid://65ubtdp13b4m"]
+
+[ext_resource type="Texture2D" uid="uid://m2yxa8rkboog" path="res://img/generated_image_0.png" id="1_illqy"]
+[ext_resource type="Texture2D" uid="uid://dayju010rewp3" path="res://img/generated_image_1.png" id="2_dvg0m"]
+[ext_resource type="Texture2D" uid="uid://b7ya528w8r5sr" path="res://img/generated_image_2.png" id="3_eraav"]
+[ext_resource type="Texture2D" uid="uid://2b2084kemnxr" path="res://img/generated_image_3.png" id="4_yatpu"]
+[ext_resource type="Texture2D" uid="uid://cq0uqvvn0nv4d" path="res://img/generated_image_4.png" id="5_bdrpx"]
+[ext_resource type="Texture2D" uid="uid://cth6t6xpn4h2" path="res://img/training_image_32.png" id="6_q1lho"]
+[ext_resource type="Texture2D" uid="uid://clg8gn1sn86kt" path="res://img/training_image_33.png" id="7_tf5x1"]
+[ext_resource type="Texture2D" uid="uid://cjxnnqh5mkeqm" path="res://img/training_image_34.png" id="8_bvhdj"]
+[ext_resource type="Texture2D" uid="uid://dmd5k37jprc60" path="res://img/training_image_35.png" id="9_8bq17"]
+[ext_resource type="Texture2D" uid="uid://bokn7ugbhgn7v" path="res://img/training_image_36.png" id="10_q11ct"]
+[ext_resource type="Texture2D" uid="uid://bo78grn71g0cb" path="res://img/training_image_37.png" id="11_mmiqi"]
+[ext_resource type="Texture2D" uid="uid://dhbqjayhmenje" path="res://img/training_image_38.png" id="12_5k7lh"]
+[ext_resource type="Texture2D" uid="uid://bq46twvstoohe" path="res://img/training_image_39.png" id="13_odt3f"]
+[ext_resource type="Texture2D" uid="uid://qe5vkwkad3n3" path="res://img/training_image_40.png" id="14_k33rq"]
+[ext_resource type="Texture2D" uid="uid://cu47b2cawvnqx" path="res://img/training_image_41.png" id="15_kghxp"]
+[ext_resource type="Texture2D" uid="uid://ultmu1hlilfy" path="res://img/training_image_42.png" id="16_tlj8m"]
+[ext_resource type="Texture2D" uid="uid://i1dwrrtgou6i" path="res://img/training_image_43.png" id="17_u6sjf"]
+[ext_resource type="Texture2D" uid="uid://cu24se3n2nq26" path="res://img/training_image_44.png" id="18_v3r8r"]
+[ext_resource type="Texture2D" uid="uid://dqeltvuvqh0oa" path="res://img/training_image_45.png" id="19_71g4q"]
+[ext_resource type="Texture2D" uid="uid://b7gqbc2y3vbql" path="res://img/training_image_46.png" id="20_rlgow"]
+[ext_resource type="Texture2D" uid="uid://cuf37ljn6dnsv" path="res://img/training_image_47.png" id="21_waj0b"]
+[ext_resource type="Texture2D" uid="uid://bodqoajysburm" path="res://img/training_image_48.png" id="22_xtcfc"]
+[ext_resource type="Texture2D" uid="uid://7mfhwvx17cpn" path="res://img/training_image_49.png" id="23_13lx0"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_right = 2112.0
+offset_bottom = 1728.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -195.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.294118, 0.184314, 0.341176, 1)
+
+[node name="GridContainer" type="GridContainer" parent="Control"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 31.0
+offset_right = 347.0
+offset_bottom = 299.0
+scale = Vector2(2.275, 2.275)
+columns = 5
+
+[node name="TextureRect" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("1_illqy")
+
+[node name="TextureRect2" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("2_dvg0m")
+
+[node name="TextureRect3" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("3_eraav")
+
+[node name="TextureRect4" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("4_yatpu")
+
+[node name="TextureRect5" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("5_bdrpx")
+
+[node name="TextureRect6" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("6_q1lho")
+
+[node name="TextureRect7" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("7_tf5x1")
+
+[node name="TextureRect8" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("8_bvhdj")
+
+[node name="TextureRect9" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("9_8bq17")
+
+[node name="TextureRect10" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("10_q11ct")
+
+[node name="TextureRect11" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("11_mmiqi")
+
+[node name="TextureRect12" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("12_5k7lh")
+
+[node name="TextureRect13" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("13_odt3f")
+
+[node name="TextureRect14" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("14_k33rq")
+
+[node name="TextureRect15" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("15_kghxp")
+
+[node name="TextureRect16" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("16_tlj8m")
+
+[node name="TextureRect17" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("17_u6sjf")
+
+[node name="TextureRect18" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("18_v3r8r")
+
+[node name="TextureRect19" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("19_71g4q")
+
+[node name="TextureRect20" type="TextureRect" parent="Control/GridContainer"]
+layout_mode = 2
+texture = ExtResource("20_rlgow")
+
+[node name="TextureRect21" type="TextureRect" parent="Control/GridContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("21_waj0b")
+
+[node name="TextureRect22" type="TextureRect" parent="Control/GridContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("22_xtcfc")
+
+[node name="TextureRect23" type="TextureRect" parent="Control/GridContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("23_13lx0")
+
+[node name="TextureRect24" type="TextureRect" parent="Control/GridContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("6_q1lho")
+
+[node name="TextureRect25" type="TextureRect" parent="Control/GridContainer"]
+visible = false
+layout_mode = 2
+texture = ExtResource("6_q1lho")
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 1.0
+offset_right = 309.0
+offset_bottom = 23.0
+text = "la primera fila son imagenes generadas  28 x 28 pixel 50 epoa  y 32 etapas de entrenamiento 1 imagen "
+horizontal_alignment = 1
+vertical_alignment = 1

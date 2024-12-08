@@ -2,12 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djlfd7ra5nalw"
-valid=false
+uid="uid://0wdl381b73hf"
+path="res://.godot/imported/etapa 10 40.PNG-1fe11816af3a4c1494b7296b57495538.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
-source_file="res://img/training_image_18.jpg"
+source_file="res://cap/etapa 10 40.PNG"
+dest_files=["res://.godot/imported/etapa 10 40.PNG-1fe11816af3a4c1494b7296b57495538.ctex"]
 
 [params]
 

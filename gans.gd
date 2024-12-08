@@ -1,24 +1,30 @@
 extends Node
-
+var history = ""
+var size = 20
 func _ready():
-	var generator_structure = [100, 128, 256, 512, 28*28]  # Estructura de ejemplo para el generador
-	var discriminator_structure = [28*28, 512, 256, 128, 1]  # Estructura de ejemplo para el discriminador
+	var generator_structure = [100, 128, 256, 512, size*size]  # Estructura de ejemplo para el generador
+	var discriminator_structure = [size*size, 512, 256, 128, 1]  # Estructura de ejemplo para el discriminador
 	var use_bias = true
 	
 	var gan = GAN.new(generator_structure, discriminator_structure, use_bias)
 	
 	# Crear datos de ejemplo para entrenar
 	var real_data = []
-	for i in range(50):  # Generar 1000 imágenes de ejemplo (suponiendo imágenes de 28x28 píxeles)
+	for i in range(4):  # Generar 1000 imágenes de ejemplo (suponiendo imágenes de 28x28 píxeles)
 		var image_data = []
-		for j in range(28*28):
+		for j in range(size*size):
 			image_data.append(randf())
 		real_data.append(image_data)
-	save_training_images(real_data, 28)
+	save_training_images(real_data, size)# size imagen
 	# Entrenar la GAN
-	gan.train_gan(real_data, 1, 32)  # Epochs = 10, batch_size = 32
-	save_generated_images(gan, 5, 28)
+	gan.train_gan(real_data, 50, 32)  # Epochs = 10, batch_size = 32
+	gan.save_gan("res://data/gans")
+
+	
+	save_generated_images(gan, 5, size) # valor size imagen
 	print("Training complete")
+	history += "Training complete"
+	save_history(history, "res://data/historial.txt")
 
 
 
@@ -80,15 +86,15 @@ func save_training_images(real_data, size):
 		var image_data = real_data[i]
 
 		if image_data.size() != size * size:
-			print("Training image data has incorrect size. Expected: ", size * size, " Got: ", image_data.size())
+			history += "Training image data has incorrect size. Expected: "+str( size * size ) + " Got: " + str (  image_data.size()) + "\n"
 			continue
 
-		var image = Image.create(28, 28, false, Image.FORMAT_RGBA8)
+		var image = Image.create(size, size, false, Image.FORMAT_RGBA8)
 		#image.create(size, size, false, Image.FORMAT_RGB8)
 		
 		# Asegurarnos de que la imagen se crea correctamente
 		if image.get_width() != size or image.get_height() != size:
-			print("Failed to create image with correct dimensions. Width: ", image.get_width(), " Height: ", image.get_height())
+			history += "Failed to create image with correct dimensions. Width: " + str(image.get_width()) + " Height: "+  str(image.get_height())+ "\n"
 			continue
 		
 		# Dibujar los píxeles directamente
@@ -103,6 +109,7 @@ func save_training_images(real_data, size):
 		var result = image.save_png(save_path)
 		if result != OK:
 			print("Failed to save training image: ", save_path)
+			history += "Failed to save training image: " + save_path
 		else:
 			print("Training image saved: ", save_path)
 
@@ -115,7 +122,8 @@ func save_generated_images(gan, num_samples, size):
 	for i in range(num_samples):
 		var noise = gan.generate_noise(100)
 		var generated_data = gan.generator_produce_data(noise)
-
+		var loss = gan.discriminator_classify(generated_data)
+		prints("es preciso en " , loss)
 		if generated_data.size() != size * size:
 			print("Generated data has incorrect size. Expected: ", size * size, " Got: ", generated_data.size())
 			continue
@@ -137,3 +145,19 @@ func save_generated_images(gan, num_samples, size):
 			print("Failed to save generated image: ", save_path)
 		else:
 			print("Generated image saved: ", save_path)
+			
+			
+			
+# Función para guardar historial en texto
+func save_history(data, path: String):
+	var temp_file = FileAccess.open(path, FileAccess.WRITE)
+	if temp_file:
+		temp_file.store_string(data)
+		temp_file.close()
+		
+		
+func compute_loss(predictions: Array, labels: Array) -> float:
+	var loss = 0.0
+	for i in range(predictions.size()):
+		loss += pow(predictions[i] - labels[i], 2)
+	return loss / predictions.size()
