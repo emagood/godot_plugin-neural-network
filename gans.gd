@@ -1,23 +1,46 @@
 extends Node
 var history = ""
-var size = 20
+var size = 28
+var image_paths = []
+var dir_fashion = "C:/Users/Emabe/Desktop/entrena/fashion/train/"
+var max = 25
+var real_data
+
+
+
 func _ready():
 	var generator_structure = [100, 128, 256, 512, size*size]  # Estructura de ejemplo para el generador
 	var discriminator_structure = [size*size, 512, 256, 128, 1]  # Estructura de ejemplo para el discriminador
 	var use_bias = true
 	
 	var gan = GAN.new(generator_structure, discriminator_structure, use_bias)
+	gan.load_gan("res://data/gans")
 	
-	# Crear datos de ejemplo para entrenar
-	var real_data = []
-	for i in range(4):  # Generar 1000 imágenes de ejemplo (suponiendo imágenes de 28x28 píxeles)
-		var image_data = []
-		for j in range(size*size):
-			image_data.append(randf())
-		real_data.append(image_data)
+# Ejemplo de uso
+	#image_paths = [
+	#"res://img/training_image_0.png",
+	#"res://img/training_image_1.png",
+	#"res://img/training_image_2.png"
+#]
+	dir_contents(dir_fashion , max)
+	var size = 28  # Tamaño de las imágenes
+	var real_data = load_training_images(image_paths, size)
+	print("Datos cargados: ")
+
+	''' esto es para generar imagenes random '''
+	## Crear datos de ejemplo para entrenar
+	#real_data = []
+	#for i in range(4):  # Generar 1000 imágenes de ejemplo (suponiendo imágenes de 28x28 píxeles)
+		#var image_data = []
+		#for j in range(size*size):
+			#image_data.append(randf())
+		#real_data.append(image_data)
+		
+		
+		
 	save_training_images(real_data, size)# size imagen
 	# Entrenar la GAN
-	gan.train_gan(real_data, 50, 32)  # Epochs = 10, batch_size = 32
+	gan.train_gan(real_data, 5, 25)  # Epochs = 10, batch_size = 32
 	gan.save_gan("res://data/gans")
 
 	
@@ -82,7 +105,11 @@ func _ready():
 func save_training_images(real_data, size):
 	#var img = Image.create(90, 90, false, Image.FORMAT_RGBA8)
 	#print("Alto: ", img.get_height(), " Ancho: ", img.get_width())
+	var max = 10
 	for i in range(real_data.size()):
+		max -= 1
+		if max <= 0:
+			return
 		var image_data = real_data[i]
 
 		if image_data.size() != size * size:
@@ -161,3 +188,57 @@ func compute_loss(predictions: Array, labels: Array) -> float:
 	for i in range(predictions.size()):
 		loss += pow(predictions[i] - labels[i], 2)
 	return loss / predictions.size()
+	
+
+
+
+func load_training_images(image_paths: Array, size: int) -> Array:
+	var loaded_data = []
+	
+	for path in image_paths:
+		var image = Image.new()
+		var error = image.load(path)
+		
+		if error != OK:
+			print("Failed to load image: ", path)
+			continue
+		
+		if image.get_width() != size or image.get_height() != size:
+			print("Image size does not match. Width: ", image.get_width(), " Height: ", image.get_height(), " Expected: ", size)
+			continue
+		
+		var image_data = []
+		for y in range(size):
+			for x in range(size):
+				var color = image.get_pixel(x, y)
+				var value = color.r  # Asumiendo escala de grises, usar solo el canal rojo
+				image_data.append(value)
+		
+		loaded_data.append(image_data)
+	
+	return loaded_data
+
+
+
+
+func dir_contents(path , max):
+	
+	var dir = DirAccess.open(path)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "" and max > 0:
+			max -= 1
+			if dir.current_is_dir():
+				print("⭐️DIRECTORIO ENCONTRADO⭐️ : " + file_name)
+			else:
+				print("⭐ARCHIVO ENCONTRADO⭐️ : " + file_name)
+				print("f⭐️EXTENCION DEL ARCHIVO⭐️: " + file_name.get_extension())
+
+				if file_name.get_extension() == "png" or file_name.get_extension() == "jpg":
+					prints("estencion gd")
+					image_paths.append(path + "/" + file_name)
+					prints( "⭐️DIRECTORIO⭐️  ",path + "/" + file_name)
+			file_name = dir.get_next()
+	else:
+		print("⭐️ EDITOR FALLO : An error occurred when trying to access the path ⭐️")
