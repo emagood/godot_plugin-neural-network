@@ -1,6 +1,6 @@
 
 
-class_name GAN
+#class_name GAN
 extends Node
 
 var generator : NNET

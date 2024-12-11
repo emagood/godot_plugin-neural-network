@@ -1,9 +1,10 @@
-class_name GAN
 extends Node
+class_name IMG
 
-var generator : NNET
+
+
 var discriminator : NNET
-var generator_structure : Array
+
 var discriminator_structure : Array
 var history = ""
 var current = 0
@@ -11,19 +12,21 @@ var min_val = 0.00053494601191
 var max_val = 0.53720839288
 var adjusted_value
 
-func _init(generator_structure : Array, discriminator_structure : Array, use_bias : bool):
+
+func _init(discriminator_structure : Array , use_bias : bool):
 	randomize()
-	self.generator_structure = generator_structure
+
 	self.discriminator_structure = discriminator_structure
-	generator = NNET.new(generator_structure, use_bias)
 	discriminator = NNET.new(discriminator_structure, use_bias)
 	set_algorithms()
 
 func set_algorithms():
-	generator.use_Adam(0.001)  # Configura el algoritmo Adam para el generador
-	discriminator.use_Adam(0.001)  # Configura el algoritmo Adam para el discriminador
+	discriminator.use_Adam(0.004)  # Configura el algoritmo Adam para el discriminador
 
-func train_gan(real_data : Array, epochs : int, batch_size : int):
+
+
+func train_gan(real_data : Array, tag : Array, epochs : int, batch_size : int):
+	
 	randomize()
 	for epoch in range(epochs):
 		prints("Epoch: ", epoch , " size data ", real_data.size())
@@ -53,7 +56,7 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 			history += "antes de entrenar el discriminador real_batch.size()" + str(real_batch.size()) + "\n"
 			for i in range(real_batch.size()):
 				var noise = generate_noise(100)
-				var gen_data = generator_produce_data(noise)
+				var gen_data 
 				generated_batch.append(gen_data)
 				if i == 0 and batch == 0:
 					history += "generate data sample " + str(gen_data) + "\n"
@@ -90,11 +93,11 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 			#discriminator.train(real_batch, real_labels)
 			#discriminator.train(generated_batch, fake_labels)
 
-			discriminator.train(real_batch, real_labels)
-			var errordis = discriminator.get_loss(real_batch, real_labels)
-			prints("error del discriminadir aprendiendo de imagen real" , errordis,"   labels etiqueta ", real_labels)
+			discriminator.train(real_batch, tag)
+			var errordis = discriminator.get_loss(real_batch, tag)
+			#prints("error del discriminadir aprendiendo de imagen real" , errordis,"   labels etiqueta ", real_labels)
 
-			var disc_real_loss = compute_loss(discriminator.get_output(), real_labels)  # Real labels
+			var disc_real_loss = compute_loss(discriminator.get_output(), tag)  # Real labels
 			print("Discriminator real data loss: ", disc_real_loss)
 			history += "Discriminator real data loss: " + str(disc_real_loss) + "\n"
 
@@ -107,102 +110,44 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 			print("Discriminator propagate_backward with generated data done")
 			discriminator.apply_gradients(0.01)
 			print("Discriminator apply_gradients with generated data done")
-			discriminator.train(generated_batch, fake_labels)
+			discriminator.traintrain(real_batch, tag)
 			var disc_fake_loss = compute_loss(discriminator.get_output(), fake_labels)  # Fake labels
 			print("Discriminator fake data loss: ", disc_fake_loss)
 			discriminator.train(generated_batch, fake_labels)
 			prints("   gtamaño del entrenamientro ",generated_batch.size(),fake_labels.size())
-			history += "Discriminator fake data loss: " + str(disc_fake_loss) + "\n"
-
-			var noise_batch = []
-			for i in range(batch_size):
-				noise_batch.append(generate_noise(100))
-
-			var misleading_labels = []
-			for i in range(batch_size):
-				misleading_labels.append([1.0])  # El generador intenta engañar al discriminador
-
-			var disc_predictions = []
-			for i in range(noise_batch.size()):
-				var gen_data = generator_produce_data(noise_batch[i])
-				var prediction = discriminator_classify(gen_data)
-				#var prediction2 = discriminator_classify(real_batch[index_bach])
-				disc_predictions.append(prediction)
-				prints("prediion de lo generado y lo otro : " , prediction)
-				adjusted_value = 1.0 - ((prediction[0] - min_val) / (max_val - min_val)) * (0.999 - 0.001) + 0.001
-				prints(adjusted_value , " error de enrtrada salida ")
+			history += "entrenamiento " + "\n"
 
 
-			var generator_labels = []
-			for i in range(disc_predictions.size()):
-				#prints("prediion discpredicction  : " , disc_predictions.size())
-				generator_labels.append([1.0])
 
-			var gen_loss = compute_loss(disc_predictions, generator_labels)
-
-			generator.set_input(noise_batch[0])
-			
-			save_training_images(noise_batch, 28,"generador")
-			prints("Noise size : " , noise_batch.size()," size de  bach 0: ",noise_batch[0].size())
-			
-		 #Crear una lista de etiquetas plana con el tamaño adecuado
-			generator_labels = []
-			for i in range(784):
-				generator_labels.append(1.0)
-
-			prints("size label generado ",generator_labels.size())
-			generator.set_target(generator_labels)# quiere que sea verdad [1.0]
-			generator.propagate_forward()
-			generator.propagate_backward()
-
-			generator.apply_gradients(0.5)  # gen_loss * 0.4Uso el error del discriminador para ajustar el generador
-			print("Error del generador: ", gen_loss)
-			print("size label: ", generator_labels.size(), " is[0]: ", batch, " Generator training complete")
-			
-			#var format = format_data(generator_labels)
-			#prints(format)
-			#prints(format_data(noise_batch))
-			#generator_labels = []
-			#for i in range(784):
-				#generator_labels.append([1.0])
-			var target_data = []
-			#var target_example = []
-			#for j in range(784):
-				#target_example.append(1.0)
-			target_data.append(generator_labels)
-			prints(noise_batch.size())
-			var pari = 0.0
-			
-			#for i in range(noise_batch.size()):
-				#
-				#var data_train = []
-				#data_train.append(noise_batch[i])
-				#
-				#generator.train(data_train, target_data)
-				#var gen_data = generator.get_output()
-				##var data_imag = []
-				##data_imag.append(gen_data)
-				##save_training_images(data_imag, 28,"generador")
-				#var prediction = discriminator_classify(gen_data)
-				#prints("predicion de ia discrimina ", prediction[0])
-				#generator.propagate_backward()
-				#adjusted_value = 1.0 - ((prediction[0] - min_val) / (max_val - min_val)) * (0.999 - 0.001) + 0.001
-				#generator.apply_gradients(adjusted_value) 
-				#if pari > adjusted_value:
-					#prints("se aprendio mas que antes en: " ,adjusted_value - pari )
-				#else:
-					#prints("se perdio un promedio de :", pari - adjusted_value)
-				#pari = adjusted_value
-				#prints((adjusted_value + randf() * (0.03 - 0.01) + 0.001)  / 3)
-			
 #
+			#var disc_predictions = []
+			#for i in range(9):
+				#var gen_data 
+				#var prediction = discriminator_classify(gen_data)
+#
+				#disc_predictions.append(prediction)
+				#prints("prediion de lo generado y lo otro : " , prediction)
+				#adjusted_value = 1.0 - ((prediction[0] - min_val) / (max_val - min_val)) * (0.999 - 0.001) + 0.001
+				#prints(adjusted_value , " error de enrtrada salida ")
+#
+#
+			#var generator_labels = []
+			#for i in range(disc_predictions.size()):
+				##prints("prediion discpredicction  : " , disc_predictions.size())
+				#generator_labels.append([1.0])
+#
+			#var gen_loss = compute_loss(disc_predictions, generator_labels)
 
-		#for i in range(5):
-			#var noise = generate_noise(100)
-			#var generated_data = generator_produce_data(noise)
-			#
-			#print("Generated data sample after epoch ", epoch, ": ", "generated_data")
 	save_history(history, "res://data/hgans.txt")
+
+
+
+
+
+
+
+
+
 
 func compute_loss(predictions: Array, labels: Array) -> float:
 	var loss = 0.0
@@ -213,10 +158,7 @@ func compute_loss(predictions: Array, labels: Array) -> float:
 			loss += pow(predictions[i] - labels[i][0], 2)  # Ajuste para valores float
 	return loss / predictions.size()  # Devuelve la pérdida media
 
-func generator_produce_data(input_data: Array) -> Array:
-	generator.set_input(input_data)
-	generator.propagate_forward()
-	return generator.get_output()
+
 
 func generate_noise(size: int) -> Array:
 	var noise = []
@@ -231,18 +173,18 @@ func discriminator_classify(input_data: Array) -> Array:
 	return [discriminator.get_output()[0]]  # Devuelve un array con un solo valor
 
 func set_batch_size(new_batch_size : int):
-	generator.set_batch_size(new_batch_size)
+
 	discriminator.set_batch_size(new_batch_size)
 
 func save_gan(path: String):
-	generator.save_binary(path + "_generator.bin")
-	discriminator.save_binary(path + "_discriminator.bin")
-	print("GAN model saved at: ", path)
+
+	discriminator.save_binary(path + "_img_train.bin")
+	print("img model saved at: ", path)
 
 func load_gan(path: String):
-	generator.load_data(path + "_generator.bin")
-	discriminator.load_data(path + "_discriminator.bin")
-	print("GAN model loaded from: ", path)
+
+	discriminator.load_data(path + "_img_train.bin")
+	print("img model loaded from: ", path)
 
 func save_history(data: String, path: String):
 	var temp_file = FileAccess.open(path, FileAccess.WRITE)

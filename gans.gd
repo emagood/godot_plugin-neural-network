@@ -41,7 +41,7 @@ func _ready():
 		
 	save_training_images(real_data, size)# size imagen
 	# Entrenar la GAN
-	gan.train_gan(real_data, 1, 25)  # Epochs = 10, batch_size = 32
+	gan.train_gan(real_data, 20, 25)  # Epochs = 10, batch_size = 32
 	gan.save_gan("res://data/gans")
 
 	
