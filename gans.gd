@@ -9,8 +9,9 @@ var real_data
 
 
 func _ready():
-	var generator_structure = [100, 128, 256, 512, size*size]  # Estructura de ejemplo para el generador
-	var discriminator_structure = [size*size, 512, 256, 128, 1]  # Estructura de ejemplo para el discriminador
+	randomize()
+	var generator_structure = [100, 256, 512, 980, size*size]  # Estructura de ejemplo para el generador
+	var discriminator_structure = [size*size, 256, 256, 64, 1]  # Estructura de ejemplo para el discriminador
 	var use_bias = true
 	
 	var gan = GAN.new(generator_structure, discriminator_structure, use_bias)
@@ -40,7 +41,7 @@ func _ready():
 		
 	save_training_images(real_data, size)# size imagen
 	# Entrenar la GAN
-	gan.train_gan(real_data, 5, 25)  # Epochs = 10, batch_size = 32
+	gan.train_gan(real_data, 1, 25)  # Epochs = 10, batch_size = 32
 	gan.save_gan("res://data/gans")
 
 	

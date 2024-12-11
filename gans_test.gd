@@ -23,6 +23,7 @@ func set_algorithms():
 	discriminator.use_Adam(0.001)  # Configura el algoritmo Adam para el discriminador
 
 func train_gan(real_data : Array, epochs : int, batch_size : int):
+	randomize()
 	for epoch in range(epochs):
 		prints("Epoch: ", epoch , " size data ", real_data.size())
 		#print("Epoch: ", epoch)
@@ -78,11 +79,11 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 			save_training_images(real_batch, 28 , "disriminados")
 			real_batch = format_data(real_batch)
 			real_labels = format_data(real_labels)
-			print("Type of real_batch: ", typeof(real_batch))
-			print("Type of real_labels: ", typeof(real_labels))
-			print("Type of generated_batch: ", typeof(generated_batch))
-			print("Type of fake_labels: ", typeof(fake_labels))
-			prints(real_batch.size() ," ",real_labels.size())
+			#print("Type of real_batch: ", typeof(real_batch))
+			#print("Type of real_labels: ", typeof(real_labels))
+			#print("Type of generated_batch: ", typeof(generated_batch))
+			#print("Type of fake_labels: ", typeof(fake_labels))
+			#prints(real_batch.size() ," ",real_labels.size())
 
 # Entrenar discriminador con datos reales y generados usando train
 			#discriminator.train(real_batch, real_labels)
@@ -103,7 +104,7 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 			print("Discriminator propagate_forward with generated data done")
 			discriminator.propagate_backward()
 			print("Discriminator propagate_backward with generated data done")
-			discriminator.apply_gradients(0.005)
+			discriminator.apply_gradients(0.01)
 			print("Discriminator apply_gradients with generated data done")
 			discriminator.train(generated_batch, fake_labels)
 			var disc_fake_loss = compute_loss(discriminator.get_output(), fake_labels)  # Fake labels
@@ -133,7 +134,7 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 
 			var generator_labels = []
 			for i in range(disc_predictions.size()):
-				prints("prediion discpredicction  : " , disc_predictions.size())
+				#prints("prediion discpredicction  : " , disc_predictions.size())
 				generator_labels.append([1.0])
 
 			var gen_loss = compute_loss(disc_predictions, generator_labels)
@@ -153,7 +154,7 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 			generator.propagate_forward()
 			generator.propagate_backward()
 
-			generator.apply_gradients(gen_loss)  # gen_loss * 0.4Uso el error del discriminador para ajustar el generador
+			generator.apply_gradients(0.01)  # gen_loss * 0.4Uso el error del discriminador para ajustar el generador
 			print("Error del generador: ", gen_loss)
 			print("size label: ", generator_labels.size(), " is[0]: ", batch, " Generator training complete")
 			
@@ -169,23 +170,35 @@ func train_gan(real_data : Array, epochs : int, batch_size : int):
 				#target_example.append(1.0)
 			target_data.append(generator_labels)
 			prints(noise_batch.size())
+			var pari = 0.0
 			for i in range(noise_batch.size()):
+				
 				var data_train = []
 				data_train.append(noise_batch[i])
+				
 				generator.train(data_train, target_data)
 				var gen_data = generator.get_output()
+				#var data_imag = []
+				#data_imag.append(gen_data)
+				#save_training_images(data_imag, 28,"generador")
 				var prediction = discriminator_classify(gen_data)
 				prints("predicion de ia discrimina ", prediction[0])
 				generator.propagate_backward()
-				adjusted_value = 0.999 - ((prediction[0] - min_val) / (max_val - min_val)) * (0.999 - 0.001) + 0.001
-				generator.apply_gradients(adjusted_value - 0.2) 
-				prints(adjusted_value  / 17)
-				
-		for i in range(5):
-			var noise = generate_noise(100)
-			var generated_data = generator_produce_data(noise)
+				adjusted_value = 1.0 - ((prediction[0] - min_val) / (max_val - min_val)) * (0.999 - 0.001) + 0.001
+				generator.apply_gradients(adjusted_value) 
+				if pari > adjusted_value:
+					prints("se aprendio mas que antes en: " ,adjusted_value - pari )
+				else:
+					prints("se perdio un promedio de :", pari - adjusted_value)
+				pari = adjusted_value
+				prints((adjusted_value + randf() * (0.03 - 0.01) + 0.001)  / 3)
 			
-			print("Generated data sample after epoch ", epoch, ": ", "generated_data")
+#
+		#for i in range(5):
+			#var noise = generate_noise(100)
+			#var generated_data = generator_produce_data(noise)
+			#
+			#print("Generated data sample after epoch ", epoch, ": ", "generated_data")
 	save_history(history, "res://data/hgans.txt")
 
 func compute_loss(predictions: Array, labels: Array) -> float:
@@ -204,8 +217,9 @@ func generator_produce_data(input_data: Array) -> Array:
 
 func generate_noise(size: int) -> Array:
 	var noise = []
+
 	for i in range(size):
-		noise.append(randf())  # Genera un valor aleatorio entre 0 y 1
+		noise.append(randf_range(0.9, 0.0001) + randf_range(0.0001, 0.0) )  # Genera un valor aleatorio entre 0 y 1
 	return noise
 
 func discriminator_classify(input_data: Array) -> Array:
