@@ -428,6 +428,7 @@ func set_loss_function(function : Variant, parameters : Array = []) -> void:
 					return sum
 			BNNET.LossFunctions.Huber_loss:
 				fa[f.size()] = parameters
+				prints("parametro: ", parameters)
 				lf = func(outputs, targets):
 					var i : int = 0
 					var length : float = 0
@@ -1241,7 +1242,7 @@ func set_batch_size(new_batch_size : int) -> void:
 
 func set_input(input : Array) -> void:
 	if input.size() != neurons_out[0].size():
-		push_error("Input size must match number of neurons on the first layer")
+		push_error(input.size(), "  ",neurons_out[0].size(),"Input size must match number of neurons on the first layer")
 		return
 	neurons_out[0] = input.duplicate()
 
@@ -1278,7 +1279,7 @@ func get_loss(input_data : Array, target_data : Array) -> float:
 		push_error("Provide input data")
 		return -1.0
 	if input_data.size() != target_data.size():
-		push_error("Number of elements in input data array doesn't match number of elements in target data array")
+		push_error(input_data.size(),"   ",target_data.size() ,"Number of elements in input data array doesn't match number of elements in target data array")
 		return -1.0
 	var loss : float = 0
 	var i : int = 0

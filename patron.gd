@@ -43,7 +43,7 @@ var fashion = "C:/Users/Emabe/Desktop/entrena/fashion/train.csv"
 func _ready():
 	''' solo ia '''
 	randomize()
-	var discriminator_structure = [784,125,10]  # estructura de ejemplo 
+	var discriminator_structure = [784,1280,512,320,80,10]  # estructura de ejemplo 
 	var use_bias = true
 	
 	#var gan = IMG.new(discriminator_structure, use_bias)
@@ -107,9 +107,9 @@ func _ready():
 	prints(tag_data)
 	
 	inig = NNET.new(discriminator_structure, true)
-	inig.set_loss_function(BNNET.LossFunctions.MSE)
-	#inig.activation_to_string(BNNET.ActivationFunctions.ReLU)
-	inig.use_Adam(0.001)
+	inig.set_loss_function(BNNET.LossFunctions.MAE)
+	inig.activation_to_string(BNNET.ActivationFunctions.softmax)
+	inig.use_Adam(0.01)
 	#inig.use_Adadelta(0.5)
 	#inig.set_loss_function(BNNET.LossFunctions.CCE)
 	#inig.use_Rprop(0.9)
@@ -117,15 +117,15 @@ func _ready():
 	#inig.use_NAG(0.9,0.1)
 	#inig.use_Yogi(0.1)
 	
-	inig.load_data("res://data/etiqueta_img_train.bin")
+	
 	''' entrenamiento '''
 	for li in range(20):
 		for i in range(10):
-
+			inig.load_data("res://data/etiqueta_img_train.bin")
 			trai(1,inig,load_data,tag_data,i)
 
 		
-	inig.save_binary("res://data/etiqueta_img_train.bin")
+			inig.save_binary("res://data/etiqueta_img_train.bin")
 	prints("guardamos")
 	
 	
@@ -170,11 +170,11 @@ func trai(bucle ,inig,load_data , tag_data , idex):
 					continue
 			#inig.apply_gradients(0.01)
 				for h in range(1):
-					#inig.set_input( load_data2[0])
-					#inig.set_target( tag_data2[0])
-					#inig.propagate_forward()
+					inig.set_input( load_data2[0])
+					inig.set_target( tag_data2[0])
+					inig.propagate_forward()
 					#inig.apply_gradients(0.01)
-					#inig.propagate_backward()
+					inig.propagate_backward()
 					inig.train(load_data2 ,tag_data2)
 					#inig.propagate_backward()
 					if j % 2 == 0:
@@ -276,7 +276,7 @@ func etiqueta(etiqueta: int) -> Array:
 	var array_resultado = Array()
 	for i in range(10):
 		if i == etiqueta:
-			array_resultado.append(0.99999)
+			array_resultado.append(0.9)
 		else:
-			array_resultado.append(0.00001)
+			array_resultado.append(0.01)
 	return array_resultado
