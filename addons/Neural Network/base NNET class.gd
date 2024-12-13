@@ -1,4 +1,4 @@
-
+@icon("res://addons/Neural Network/base NNET class.gd")
 class_name BNNET
 
 enum ActivationFunctions
@@ -38,6 +38,7 @@ enum LossFunctions
 	Hinge_loss,
 	Cosine_similarity_loss,
 	LogCosh_loss,
+	Huber_loss,
 	user_function
 }
 
