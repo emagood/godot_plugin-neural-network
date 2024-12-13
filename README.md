@@ -5,4 +5,5 @@
 
 **NNET
 ## abandoned, linial only xor simple, does not work, does not classify or generate, nothing the implementation failed because the network does not learn :(
+## https://github.com/emagood/BackPropagation.git
  
