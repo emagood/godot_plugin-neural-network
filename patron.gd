@@ -16,16 +16,16 @@ Etiqueta Descripción
 '''
 # Diccionario de etiquetas con su descripción
 var etiquetas = {
-	0: "Camiseta/top",
-	1: "Pantalón",
+	0: "Camiseta/top ",
+	1: "Pantalón 👖",
 	2: "Jersey",
-	3: "Vestido",
-	4: "Abrigo",
+	3: "Vestido 👗",
+	4: "Abrigo 👕",
 	5: "Sandalia",
-	6: "Camisa",
-	7: "Zapatillas de deporte",
-	8: "Bolsa",
-	9: "Botín"
+	6: "Camisa 🧥",
+	7: "Zapatillas de deporte 👟",
+	8: "Bolsa 👜",
+	9: "Botín 👢"
 }
 
 var inig = NNET
@@ -35,7 +35,7 @@ var image_paths = []
 var tag = []
 var tag_data = []
 var dir_fashion = "C:/Users/Emabe/Desktop/entrena/fashion/train/"
-var max = 10 # para todo cargar imagen leer el cvs y mas 
+var max = 100# para todo cargar imagen leer el cvs y mas 
 var leer = max
 var real_data
 var fashion = "C:/Users/Emabe/Desktop/entrena/fashion/train.csv"
@@ -43,11 +43,11 @@ var fashion = "C:/Users/Emabe/Desktop/entrena/fashion/train.csv"
 func _ready():
 	''' solo ia '''
 	randomize()
-	var discriminator_structure = [784, 512, 512, 64, 10]  # estructura de ejemplo 
+	var discriminator_structure = [784,125,10]  # estructura de ejemplo 
 	var use_bias = true
 	
-	var gan = IMG.new(discriminator_structure, use_bias)
-	#gan.load_gan("res://data/ident")
+	#var gan = IMG.new(discriminator_structure, use_bias)
+	#gan.load_gan("res://data/etiqueta_img_train.bin")
 
 	
 	
@@ -103,19 +103,38 @@ func _ready():
 		load_data = load_training_images(image_paths, size)
 
 	print("Datos cargados: ", load_data.size())
+	prints("tag cargados: " ,tag_data.size())
 	prints(tag_data)
-	inig = NNET.new(discriminator_structure, use_bias)
-	inig.load_data("res://data/etiqueta_" + "_img_train.bin")
-	trai(10,inig,load_data,tag_data)
+	
+	inig = NNET.new(discriminator_structure, true)
+	inig.set_loss_function(BNNET.LossFunctions.MSE)
+	#inig.activation_to_string(BNNET.ActivationFunctions.ReLU)
+	inig.use_Adam(0.001)
+	#inig.use_Adadelta(0.5)
+	#inig.set_loss_function(BNNET.LossFunctions.CCE)
+	#inig.use_Rprop(0.9)
+	inig.set_batch_size(1)
+	#inig.use_NAG(0.9,0.1)
+	#inig.use_Yogi(0.1)
+	
+	inig.load_data("res://data/etiqueta_img_train.bin")
+	''' entrenamiento '''
+	for li in range(20):
+		for i in range(10):
+
+			trai(1,inig,load_data,tag_data,i)
+
+		
+	inig.save_binary("res://data/etiqueta_img_train.bin")
 	prints("guardamos")
-	inig.save_binary("res://data/etiqueta_" + "_img_train.bin")
+	
+	
+	
 	loss_tri(inig,load_data , tag_data)
 
 	
 
 ''' solo cargamos y comprobamos '''
-func prueba(gan):
-	var loss = gan.discriminator_classify([])
 
 
 
@@ -126,33 +145,64 @@ func prueba(gan):
 
 
 
-func trai(bucle ,inig,load_data , tag_data):
-	
-	inig.use_Adam(0.004)
-	var muestra = 10
+
+func trai(bucle ,inig,load_data , tag_data , idex):
+
+	var count_index =  0
 	
 	
 	for i in range(bucle):
 		
-		
-		if muestra <= 0 :
-			loss_tri(inig,load_data , tag_data)
-			muestra = 10
-	
-	
-		prints("entrenamiento en ronda : " , i , " de tantas : " , bucle )
-		inig.set_loss_function(BNNET.LossFunctions.MSE)
-		inig.train(load_data ,tag_data)
 
+		
+		prints("entrenamiento en ronda 10 por : " , i , " de tantas : " , bucle )
+		for j in range(1):
+			for k in range(load_data.size()):
+				var load_data2 = []
+				var tag_data2 = []
+				var array = etiqueta(idex)
+				if tag_data[k] == array and array != null:
+					count_index += 1
+					load_data2.append(load_data[k])
+					tag_data2.append(tag_data[k])
+					prints(k)
+				else:
+					continue
+			#inig.apply_gradients(0.01)
+				for h in range(1):
+					#inig.set_input( load_data2[0])
+					#inig.set_target( tag_data2[0])
+					#inig.propagate_forward()
+					#inig.apply_gradients(0.01)
+					#inig.propagate_backward()
+					inig.train(load_data2 ,tag_data2)
+					#inig.propagate_backward()
+					if j % 2 == 0:
+						loss_tri(inig,load_data2 , tag_data2)
+						print("✨✨✨entrenando la red idex -:",idex," Iteración✨✨: ", j ," %  ✨✨porciento✨✨ de: ", k , " :✨✨ bucles✨✨")
+	prints("total index " , count_index ," en modo :" ,idex )
 
 
 func loss_tri(nn,load_data , tag_data):
-	var hit = randi() % load_data.size() 
-	var load_data2 = []
-	var tag_data2 = []
-	load_data2.append(load_data[hit])
-	tag_data2.append(tag_data[hit])
-	print("Loss: ", nn.get_loss(load_data2, tag_data2) , "  numero aleatorio : " , hit)
+	
+	for i in range(1):
+		var hit = 1
+		var load_data2 = []
+		var tag_data2 = []
+		load_data2.append(load_data[0])
+		tag_data2.append(tag_data[0])
+		
+		
+		nn.set_input(load_data2[0]); nn.propagate_forward()
+		
+		print("Loss: ", nn.get_loss(load_data2, tag_data2) , "  imagen: " , hit,".png")
+		
+		
+		var array = etiqueta(tag[hit])
+		
+		print("😊Etiqueta😊: ", etiquetas[tag[hit]], "🌟 Array 🌟: ", array)
+		prints("🚀data out clasifi🚀: ",nn.get_output()," ⭐️data⭐️ :", tag_data[0])
+		prints("⭐️num aleatorio⭐️: " ,hit )
 	pass
 
 
@@ -190,7 +240,7 @@ func load_training_images(image_paths: Array, size: int) -> Array:
 
 func dir_count(path, count):
 	for i in range(count):
-		var file_name = str(count) + ".png"
+		var file_name = str(i) + ".png"
 		prints(file_name)
 		image_paths.append(path + "/" + file_name)
 	
@@ -226,7 +276,7 @@ func etiqueta(etiqueta: int) -> Array:
 	var array_resultado = Array()
 	for i in range(10):
 		if i == etiqueta:
-			array_resultado.append(1)
+			array_resultado.append(0.99999)
 		else:
-			array_resultado.append(0)
+			array_resultado.append(0.00001)
 	return array_resultado
